@@ -189,6 +189,8 @@ export function SharedEmailPageClient({
             }
           })()}
           ctaText={tShared("createOwnEmail")}
+          showLogo={false}
+          showCta={false}
         />
 
         {/* 桌面端双栏布局 */}
