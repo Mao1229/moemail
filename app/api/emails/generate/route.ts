@@ -152,7 +152,7 @@ export async function POST(request: Request) {
         createdAt: now,
         completedAt: new Date(),
       })
-
+      
       return NextResponse.json({ 
         count: allResults.length,
         emails: allResults.map(r => r.address),

@@ -155,6 +155,14 @@ export function SharedEmailPageClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, email.address])
 
+  // 页面初始加载时自动选中最新的一封邮件（列表默认按新到旧）
+  useEffect(() => {
+    if (!selectedMessage && messages.length > 0) {
+      fetchMessageDetail(messages[0].id)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages])
+
   const handleLoadMore = () => {
     if (nextCursor && !loadingMore) {
       fetchMessages(nextCursor)

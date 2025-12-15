@@ -212,17 +212,17 @@ export function CreateDialog({ onEmailCreated }: CreateDialogProps) {
             description: t("batchSuccess", { count: data.count })
           })
         } else {
-          toast({
-            title: tList("success"),
-            description: t("success")
-          })
+      toast({
+        title: tList("success"),
+        description: t("success")
+      })
         }
-        onEmailCreated()
-        setOpen(false)
-        setEmailName("")
-        setBatchCount(5)
-        setLoading(false)
-      }
+      onEmailCreated()
+      setOpen(false)
+      setEmailName("")
+      setBatchCount(5)
+      setLoading(false)
+    }
     } catch {
       toast({
         title: tList("error"),
