@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { nanoid } from "nanoid"
 import { createDb } from "@/lib/db"
-import { emails } from "@/lib/schema"
+import { emails, batchTasks } from "@/lib/schema"
 import { eq, and, gt, sql } from "drizzle-orm"
 import { EXPIRY_OPTIONS } from "@/types/email"
 import { EMAIL_CONFIG } from "@/config"
@@ -139,10 +139,25 @@ export async function POST(request: Request) {
           .returning({ id: emails.id, address: emails.address })
         allResults.push(...batchResults)
       }
-      
+
+      // 将同步批量创建记录到批次历史（便于历史查询与下载）
+      const taskId = nanoid(16)
+      await db.insert(batchTasks).values({
+        id: taskId,
+        userId: userId!,
+        domain,
+        totalCount: allResults.length,
+        createdCount: allResults.length,
+        status: "completed",
+        createdAt: now,
+        completedAt: new Date(),
+      })
+
       return NextResponse.json({ 
         count: allResults.length,
-        emails: allResults.map(r => r.address)
+        emails: allResults.map(r => r.address),
+        taskId,
+        status: "completed",
       })
     }
     

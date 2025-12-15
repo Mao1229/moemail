@@ -51,6 +51,34 @@ export function CreateDialog({ onEmailCreated }: CreateDialogProps) {
     copyToClipboard(`${emailName}@${currentDomain}`)
   }
 
+  // 小批量（同步）创建时，前端根据返回的邮箱列表生成并下载 TXT 文件
+  const downloadEmailListFromEmails = (emails: string[]) => {
+    if (!emails || emails.length === 0) return
+
+    let url: string | null = null
+    let linkElement: HTMLAnchorElement | null = null
+
+    try {
+      const origin = window.location.origin
+      const links = emails.map(email => `${origin}/shared/email?email=${email}`).join("\n")
+      const blob = new Blob([links], { type: "text/plain; charset=utf-8" })
+      url = window.URL.createObjectURL(blob)
+
+      linkElement = document.createElement("a")
+      linkElement.href = url
+      linkElement.download = `email-links-${Date.now()}.txt`
+      document.body.appendChild(linkElement)
+      linkElement.click()
+    } finally {
+      if (url) {
+        window.URL.revokeObjectURL(url)
+      }
+      if (linkElement && linkElement.parentNode) {
+        document.body.removeChild(linkElement)
+      }
+    }
+  }
+
   const downloadEmailList = async (currentTaskId: string) => {
     let url: string | null = null
     let linkElement: HTMLAnchorElement | null = null
@@ -173,24 +201,28 @@ export function CreateDialog({ onEmailCreated }: CreateDialogProps) {
         // 立即开始轮询
         pollTaskStatus(data.taskId)
       } else {
-        // 同步任务完成
+        // 同步任务完成（小批量或单个创建）
         if (batchMode && data.count) {
+          // 小批量创建成功后，自动导出邮箱链接 TXT 文件
+          if (Array.isArray(data.emails) && data.emails.length > 0) {
+            downloadEmailListFromEmails(data.emails)
+          }
           toast({
             title: tList("success"),
             description: t("batchSuccess", { count: data.count })
           })
         } else {
-      toast({
-        title: tList("success"),
-        description: t("success")
-      })
+          toast({
+            title: tList("success"),
+            description: t("success")
+          })
         }
-      onEmailCreated()
-      setOpen(false)
-      setEmailName("")
-      setBatchCount(5)
-      setLoading(false)
-    }
+        onEmailCreated()
+        setOpen(false)
+        setEmailName("")
+        setBatchCount(5)
+        setLoading(false)
+      }
     } catch {
       toast({
         title: tList("error"),
