@@ -13,6 +13,14 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const emailAddress = searchParams.get("email")
   const messageType = searchParams.get("type") // "sent" | undefined
+  const format = (searchParams.get("format") || "text").toLowerCase()
+
+  if (!["text", "html", "full"].includes(format)) {
+    return NextResponse.json(
+      { error: 'format 参数只能是 "text" | "html" | "full"' },
+      { status: 400 }
+    )
+  }
 
   if (!emailAddress) {
     return NextResponse.json(
@@ -64,7 +72,27 @@ export async function GET(request: Request) {
       return NextResponse.json({ message: null })
     }
 
-    return NextResponse.json({ message: latest })
+    // 根据 format 控制返回内容字段
+    const baseMessage: Record<string, unknown> = {
+      id: latest.id,
+      emailId: latest.emailId,
+      fromAddress: latest.fromAddress,
+      toAddress: latest.toAddress,
+      subject: latest.subject,
+      type: latest.type,
+      receivedAt: latest.receivedAt,
+      sentAt: latest.sentAt,
+    }
+
+    if (format === "text" || format === "full") {
+      baseMessage.content = latest.content
+    }
+
+    if (format === "html" || format === "full") {
+      baseMessage.html = latest.html
+    }
+
+    return NextResponse.json({ message: baseMessage })
   } catch (error) {
     console.error("Failed to fetch latest message by email:", error)
     return NextResponse.json(

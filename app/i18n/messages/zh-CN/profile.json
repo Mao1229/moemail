@@ -35,6 +35,7 @@
       "getEmails": "获取邮箱列表",
       "getMessages": "获取邮件列表",
       "getMessage": "获取单封邮件",
+      "getLatestMessageByEmail": "根据邮箱获取最新邮件（可选 format=text|html|full，默认 text，仅返回纯文本）",
       "createEmailShare": "创建邮箱分享链接",
       "getEmailShares": "获取邮箱分享链接列表",
       "deleteEmailShare": "删除邮箱分享链接",

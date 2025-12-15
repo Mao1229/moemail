@@ -436,6 +436,26 @@ export function ApiKeyPanel() {
 
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
+                          <div className="text-sm font-medium">{t("docs.getLatestMessageByEmail")}</div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => copyToClipboard(
+                              `curl ${window.location.protocol}//${window.location.host}/api/emails/latest?email={emailAddress} \\
+  -H "X-API-Key: YOUR_API_KEY"`
+                            )}
+                          >
+                            <Copy className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        <pre className="text-xs bg-muted/50 rounded-lg p-4 overflow-x-auto">
+                          {`curl ${window.location.protocol}//${window.location.host}/api/emails/latest?email={emailAddress} \\
+  -H "X-API-Key: YOUR_API_KEY"`}
+                        </pre>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
                           <div className="text-sm font-medium">{t("docs.createEmailShare")}</div>
                           <Button
                             variant="ghost"
