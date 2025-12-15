@@ -7,8 +7,8 @@ interface PageProps {
   searchParams: Promise<{ email?: string }>
 }
 
-export default async function SharedEmailByAddressPage({ params, searchParams }: PageProps) {
-  await params // 获取 params 以符合接口要求，虽然不使用 locale
+export default async function SharedEmailByAddressPage({ params: _params, searchParams }: PageProps) {
+  await _params // 获取 params 以符合接口要求，虽然不使用 locale
   const { email: emailAddress } = await searchParams
 
   if (!emailAddress) {

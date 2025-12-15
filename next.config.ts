@@ -25,6 +25,14 @@ const nextConfig = {
       }
     ],
   },
+  eslint: {
+    // 在构建时忽略 ESLint 错误（警告仍然会显示）
+    ignoreDuringBuilds: false,
+  },
+  typescript: {
+    // 在构建时忽略 TypeScript 错误
+    ignoreBuildErrors: false,
+  },
 };
 
 const withPWAConfigured = withPWA({
