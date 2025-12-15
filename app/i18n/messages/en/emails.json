@@ -44,7 +44,16 @@
     "create": "Create",
     "creating": "Creating...",
     "success": "Email created successfully",
-    "failed": "Failed to create email"
+    "failed": "Failed to create email",
+    "batchMode": "Batch Create",
+    "batchCount": "Count",
+    "batchCountPlaceholder": "Enter count",
+    "batchCountInvalid": "Count must be greater than 0",
+    "batchCreatingProgress": "Creating {processed} / {total} emails...",
+    "batchHint": "Random email addresses will be generated automatically",
+    "batchCreate": "Batch Create",
+    "batchCreating": "Creating in batch...",
+    "batchSuccess": "Successfully created {count} emails"
   },
   "messages": {
     "received": "Received",

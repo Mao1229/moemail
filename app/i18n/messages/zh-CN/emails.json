@@ -44,7 +44,16 @@
     "create": "创建",
     "creating": "创建中...",
     "success": "邮箱创建成功",
-    "failed": "创建邮箱失败"
+    "failed": "创建邮箱失败",
+    "batchMode": "批量创建",
+    "batchCount": "创建数量",
+    "batchCountPlaceholder": "输入数量",
+    "batchCountInvalid": "创建数量必须大于 0",
+    "batchCreatingProgress": "正在创建 {processed} / {total} 个邮箱...",
+    "batchHint": "批量创建时会自动生成随机邮箱地址",
+    "batchCreate": "批量创建",
+    "batchCreating": "批量创建中...",
+    "batchSuccess": "成功创建 {count} 个邮箱"
   },
   "messages": {
     "received": "收件箱",
