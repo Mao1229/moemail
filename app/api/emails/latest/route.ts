@@ -50,11 +50,13 @@ export async function GET(request: Request) {
     const orderByTime =
       messageType === "sent" ? messages.sentAt : messages.receivedAt
 
+    const conditions = [eq(messages.emailId, email.id)]
+    if (messageType === "sent") {
+      conditions.push(eq(messages.type, "sent"))
+    }
+
     const latest = await db.query.messages.findFirst({
-      where: and(
-        eq(messages.emailId, email.id),
-        messageType === "sent" ? eq(messages.type, "sent") : undefined
-      ).filter(Boolean) as any,
+      where: and(...conditions),
       orderBy: [desc(orderByTime)],
     })
 
