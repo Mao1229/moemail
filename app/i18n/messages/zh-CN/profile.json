@@ -135,5 +135,24 @@
     "loading": "加载中...",
     "updateSuccess": "用户角色更新成功",
     "updateFailed": "更新用户角色失败"
+  },
+  "batchHistory": {
+    "title": "批量创建历史",
+    "noHistory": "暂无批量创建记录",
+    "download": "下载列表",
+    "downloadSuccess": "下载成功",
+    "downloadError": "下载失败",
+    "loadMore": "加载更多",
+    "error": "错误",
+    "createdCount": "已创建 {count} 个",
+    "totalCount": "共 {count} 个",
+    "createdAt": "创建时间",
+    "completedAt": "完成时间",
+    "status": {
+      "completed": "已完成",
+      "failed": "失败",
+      "processing": "处理中",
+      "pending": "等待中"
+    }
   }
 }

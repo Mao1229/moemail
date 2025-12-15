@@ -135,5 +135,24 @@
     "loading": "Loading...",
     "updateSuccess": "User role updated successfully",
     "updateFailed": "Failed to update user role"
+  },
+  "batchHistory": {
+    "title": "Batch Creation History",
+    "noHistory": "No batch creation records yet",
+    "download": "Download List",
+    "downloadSuccess": "Download successful",
+    "downloadError": "Download failed",
+    "loadMore": "Load More",
+    "error": "Error",
+    "createdCount": "Created {count}",
+    "totalCount": "Total {count}",
+    "createdAt": "Created At",
+    "completedAt": "Completed At",
+    "status": {
+      "completed": "Completed",
+      "failed": "Failed",
+      "processing": "Processing",
+      "pending": "Pending"
+    }
   }
 }

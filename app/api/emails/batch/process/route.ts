@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { nanoid } from "nanoid"
 import { createDb } from "@/lib/db"
-import { emails } from "@/lib/schema"
+import { emails, batchTasks } from "@/lib/schema"
 import { eq, sql } from "drizzle-orm"
 import { getRequestContext } from "@cloudflare/next-on-pages"
 
@@ -197,6 +197,38 @@ export async function POST(request: Request) {
     if (task.processedCount >= task.totalCount) {
       task.processedCount = task.totalCount // 确保精确等于总数
       task.status = "completed"
+      
+      // 保存到数据库以便历史查看
+      try {
+        // 先尝试更新，如果不存在则插入
+        const existing = await db.query.batchTasks.findFirst({
+          where: eq(batchTasks.id, taskId)
+        })
+        
+        if (existing) {
+          await db.update(batchTasks)
+            .set({
+              createdCount: task.createdCount,
+              status: "completed",
+              completedAt: new Date(),
+            })
+            .where(eq(batchTasks.id, taskId))
+        } else {
+          await db.insert(batchTasks).values({
+            id: taskId,
+            userId: task.userId,
+            domain: task.domain,
+            totalCount: task.totalCount,
+            createdCount: task.createdCount,
+            status: "completed",
+            createdAt: new Date(task.createdAt),
+            completedAt: new Date(),
+          })
+        }
+      } catch (dbError) {
+        // 数据库保存失败不影响 KV 存储，只记录错误
+        console.error(`Failed to save batch task ${taskId} to database:`, dbError)
+      }
     }
 
     // 保存任务状态
@@ -232,6 +264,8 @@ export async function POST(request: Request) {
     
     // 尝试更新任务状态为失败
     try {
+      const env = getRequestContext().env
+      const db = createDb()
       const { searchParams } = new URL(request.url)
       const taskId = searchParams.get("taskId")
       if (taskId) {
@@ -246,6 +280,39 @@ export async function POST(request: Request) {
             JSON.stringify(task),
             { expirationTtl: 3600 * 24 }
           )
+          
+          // 保存失败状态到数据库
+          try {
+            // 先尝试更新，如果不存在则插入
+            const existing = await db.query.batchTasks.findFirst({
+              where: eq(batchTasks.id, taskId)
+            })
+            
+            if (existing) {
+              await db.update(batchTasks)
+                .set({
+                  createdCount: task.createdCount,
+                  status: "failed",
+                  error: task.error,
+                  completedAt: new Date(),
+                })
+                .where(eq(batchTasks.id, taskId))
+            } else {
+              await db.insert(batchTasks).values({
+                id: taskId,
+                userId: task.userId,
+                domain: task.domain,
+                totalCount: task.totalCount,
+                createdCount: task.createdCount,
+                status: "failed",
+                error: task.error,
+                createdAt: new Date(task.createdAt),
+                completedAt: new Date(),
+              })
+            }
+          } catch (dbError) {
+            console.error(`Failed to save failed batch task ${taskId} to database:`, dbError)
+          }
         }
       }
     } catch (updateError) {

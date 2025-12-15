@@ -164,10 +164,6 @@ export const userRolesRelations = relations(userRoles, ({ one }) => ({
   }),
 }));
 
-export const usersRelations = relations(users, ({ many }) => ({
-  userRoles: many(userRoles),
-  apiKeys: many(apiKeys),
-}));
 
 export const rolesRelations = relations(roles, ({ many }) => ({
   userRoles: many(userRoles),
@@ -185,4 +181,36 @@ export const messageSharesRelations = relations(messageShares, ({ one }) => ({
     fields: [messageShares.messageId],
     references: [messages.id],
   }),
+}));
+
+export const batchTasks = sqliteTable('batch_task', {
+  id: text('id').primaryKey(), // 使用 taskId 作为主键
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  domain: text('domain').notNull(),
+  totalCount: integer('total_count').notNull(),
+  createdCount: integer('created_count').notNull().default(0),
+  status: text('status').notNull(), // 'pending' | 'processing' | 'completed' | 'failed'
+  error: text('error'),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+  completedAt: integer('completed_at', { mode: 'timestamp_ms' }),
+}, (table) => ({
+  userIdIdx: index('batch_task_user_id_idx').on(table.userId),
+  createdAtIdx: index('batch_task_created_at_idx').on(table.createdAt),
+}));
+
+export const batchTasksRelations = relations(batchTasks, ({ one }) => ({
+  user: one(users, {
+    fields: [batchTasks.userId],
+    references: [users.id],
+  }),
+}));
+
+export const usersRelations = relations(users, ({ many }) => ({
+  userRoles: many(userRoles),
+  apiKeys: many(apiKeys),
+  batchTasks: many(batchTasks),
 }));

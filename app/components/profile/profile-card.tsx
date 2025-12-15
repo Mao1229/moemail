@@ -14,6 +14,7 @@ import { useRolePermission } from "@/hooks/use-role-permission"
 import { PERMISSIONS } from "@/lib/permissions"
 import { WebsiteConfigPanel } from "./website-config-panel"
 import { ApiKeyPanel } from "./api-key-panel"
+import { BatchHistoryPanel } from "./batch-history-panel"
 
 interface ProfileCardProps {
   user: User
@@ -149,6 +150,9 @@ export function ProfileCard({ user }: ProfileCardProps) {
       {canManageConfig && <EmailServiceConfig />}
       {canPromote && <PromotePanel />}
       {canManageWebhook && <ApiKeyPanel />}
+      
+      {/* 批次历史 - 所有用户都可以查看自己的批次历史 */}
+      <BatchHistoryPanel />
 
       <div className="flex flex-col sm:flex-row gap-4 px-1">
         <Button
