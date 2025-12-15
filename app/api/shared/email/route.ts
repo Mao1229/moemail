@@ -1,4 +1,3 @@
-import { createDb } from "@/lib/db"
 import { NextResponse } from "next/server"
 import { getSharedEmailByAddress } from "@/lib/shared-data"
 
