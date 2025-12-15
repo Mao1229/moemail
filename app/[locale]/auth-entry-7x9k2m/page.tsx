@@ -16,7 +16,7 @@ export default async function LoginPage({
   const session = await auth()
   
   if (session?.user) {
-    redirect(`/${locale}`)
+    redirect(`/${locale}/moe`)
   }
 
   const turnstile = await getTurnstileConfig()
@@ -27,3 +27,4 @@ export default async function LoginPage({
     </div>
   )
 }
+

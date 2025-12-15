@@ -24,13 +24,9 @@ export function SignButton({ size = "default" }: SignButtonProps) {
     return <div className="h-9" />
   }
 
+  // 移除登录按钮，隐藏登录入口
   if (!session?.user) {
-    return (
-      <Button onClick={() => router.push(`/${locale}/login`)} className={cn("gap-2", size === "lg" ? "px-8" : "")} size={size}>
-        <LogIn className={size === "lg" ? "w-5 h-5" : "w-4 h-4"} />
-        {t("login")}
-      </Button>
-    )
+    return null
   }
 
   return (

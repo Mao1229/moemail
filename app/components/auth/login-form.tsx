@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react"
 import { signIn } from "next-auth/react"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 import { useToast } from "@/components/ui/use-toast"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -39,6 +39,7 @@ interface FormErrors {
 }
 
 export function LoginForm({ turnstile }: LoginFormProps) {
+  const locale = useLocale()
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -128,7 +129,8 @@ export function LoginForm({ turnstile }: LoginFormProps) {
         return
       }
 
-      window.location.href = "/"
+      // 登录成功后跳转到邮箱管理页面
+      window.location.href = `/${locale}/moe`
     } catch (error) {
       toast({
         title: t("toast.loginFailed"),
@@ -184,7 +186,8 @@ export function LoginForm({ turnstile }: LoginFormProps) {
         return
       }
 
-      window.location.href = "/"
+      // 登录成功后跳转到邮箱管理页面
+      window.location.href = `/${locale}/moe`
     } catch (error) {
       toast({
         title: t("toast.registerFailed"),
@@ -197,11 +200,11 @@ export function LoginForm({ turnstile }: LoginFormProps) {
   }
 
   const handleGithubLogin = () => {
-    signIn("github", { callbackUrl: "/" })
+    signIn("github", { callbackUrl: `/${locale}/moe` })
   }
 
   const handleGoogleLogin = () => {
-    signIn("google", { callbackUrl: "/" })
+    signIn("google", { callbackUrl: `/${locale}/moe` })
   }
 
   return (

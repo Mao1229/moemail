@@ -126,7 +126,8 @@ export function BatchHistoryPanel() {
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement("a")
       a.href = url
-      a.download = `emails-${taskId}.txt`
+      // 文件名由后端 Content-Disposition 头控制，这里只是备用
+      a.download = `email-links-${taskId}.txt`
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(url)
