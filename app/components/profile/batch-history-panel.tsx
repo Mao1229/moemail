@@ -23,7 +23,7 @@ interface BatchHistoryResponse {
     domain: string
     totalCount: number
     createdCount: number
-    status: string
+    status: BatchHistoryItem["status"]
     error?: string
     createdAt: string
     completedAt?: string
