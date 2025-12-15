@@ -142,6 +142,11 @@ export function ShareDialog({ emailId, emailAddress }: ShareDialogProps) {
     return `${window.location.origin}/shared/email?email=${encodeURIComponent(emailAddress)}`
   }
 
+  const getEmailAddressUrlDisplay = () => {
+    // 显示时使用未编码的 @ 符号
+    return `${window.location.origin}/shared/email?email=${emailAddress}`
+  }
+
   const handleCopy = async (token: string) => {
     const url = getShareUrl(token)
     const success = await copyToClipboard(url)
@@ -218,7 +223,7 @@ export function ShareDialog({ emailId, emailAddress }: ShareDialogProps) {
                     rel="noopener noreferrer"
                     className="flex-1 text-xs p-1 rounded font-mono transition-colors break-all bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary cursor-pointer"
                   >
-                    {getEmailAddressUrl()}
+                    {getEmailAddressUrlDisplay()}
                   </a>
                   <Button
                     variant="ghost"

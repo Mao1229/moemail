@@ -127,10 +127,21 @@ export async function GET(
       )
     }
     
-    const content = emailList.join("\n")
+    // 获取请求的 origin
+    const url = new URL(request.url)
+    const origin = url.origin
+    
+    // 将邮箱地址转换为访问链接
+    // 注意：虽然用户希望显示时看到未编码的@符号，但导出的URL应该是可直接使用的
+    // 为了兼容性，我们使用未编码的格式（Next.js会自动处理）
+    const emailLinks = emailList.map(emailAddress => 
+      `${origin}/shared/email?email=${emailAddress}`
+    )
+    
+    const content = emailLinks.join("\n")
 
     // 对文件名进行编码，确保特殊字符正确处理
-    const encodedFilename = encodeURIComponent(`emails-${taskId}.txt`)
+    const encodedFilename = encodeURIComponent(`email-links-${taskId}.txt`)
 
     // 返回 TXT 文件
     return new NextResponse(content, {

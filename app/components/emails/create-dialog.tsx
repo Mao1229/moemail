@@ -65,7 +65,8 @@ export function CreateDialog({ onEmailCreated }: CreateDialogProps) {
       url = window.URL.createObjectURL(blob)
       linkElement = document.createElement("a")
       linkElement.href = url
-      linkElement.download = `emails-${currentTaskId}.txt`
+      // 文件名由后端 Content-Disposition 头控制，这里只是备用
+      linkElement.download = `email-links-${currentTaskId}.txt`
       document.body.appendChild(linkElement)
       linkElement.click()
       
@@ -179,14 +180,14 @@ export function CreateDialog({ onEmailCreated }: CreateDialogProps) {
             description: t("batchSuccess", { count: data.count })
           })
         } else {
-          toast({
-            title: tList("success"),
-            description: t("success")
-          })
+      toast({
+        title: tList("success"),
+        description: t("success")
+      })
         }
-        onEmailCreated()
-        setOpen(false)
-        setEmailName("")
+      onEmailCreated()
+      setOpen(false)
+      setEmailName("")
         setBatchCount(5)
         setLoading(false)
       }
@@ -367,34 +368,34 @@ export function CreateDialog({ onEmailCreated }: CreateDialogProps) {
           </div>
 
           {!batchMode ? (
-            <div className="flex gap-2">
-              <Input
-                value={emailName}
-                onChange={(e) => setEmailName(e.target.value)}
-                placeholder={t("namePlaceholder")}
-                className="flex-1"
-              />
-              {(config?.emailDomainsArray?.length ?? 0) > 1 && (
-                <Select value={currentDomain} onValueChange={setCurrentDomain}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {config?.emailDomainsArray?.map(d => (
-                      <SelectItem key={d} value={d}>@{d}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={generateRandomName}
-                type="button"
-              >
-                <RefreshCw className="w-4 h-4" />
-              </Button>
-            </div>
+          <div className="flex gap-2">
+            <Input
+              value={emailName}
+              onChange={(e) => setEmailName(e.target.value)}
+              placeholder={t("namePlaceholder")}
+              className="flex-1"
+            />
+            {(config?.emailDomainsArray?.length ?? 0) > 1 && (
+              <Select value={currentDomain} onValueChange={setCurrentDomain}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {config?.emailDomainsArray?.map(d => (
+                    <SelectItem key={d} value={d}>@{d}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={generateRandomName}
+              type="button"
+            >
+              <RefreshCw className="w-4 h-4" />
+            </Button>
+          </div>
           ) : (
             <div className="space-y-2">
               <div className="flex gap-2">
@@ -513,22 +514,22 @@ export function CreateDialog({ onEmailCreated }: CreateDialogProps) {
           </div>
 
           {!batchMode && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span className="shrink-0">{t("domain")}:</span>
-              {emailName ? (
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="truncate">{`${emailName}@${currentDomain}`}</span>
-                  <div
-                    className="shrink-0 cursor-pointer hover:text-primary transition-colors"
-                    onClick={copyEmailAddress}
-                  >
-                    <Copy className="size-4" />
-                  </div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span className="shrink-0">{t("domain")}:</span>
+            {emailName ? (
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="truncate">{`${emailName}@${currentDomain}`}</span>
+                <div
+                  className="shrink-0 cursor-pointer hover:text-primary transition-colors"
+                  onClick={copyEmailAddress}
+                >
+                  <Copy className="size-4" />
                 </div>
-              ) : (
-                <span className="text-gray-400">...</span>
-              )}
-            </div>
+              </div>
+            ) : (
+              <span className="text-gray-400">...</span>
+            )}
+          </div>
           )}
         </div>
         <div className="flex justify-end gap-2">

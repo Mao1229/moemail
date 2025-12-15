@@ -28,7 +28,20 @@
     "deleteSuccess": "邮箱已删除",
     "deleteFailed": "删除邮箱失败",
     "error": "错误",
-    "success": "成功"
+    "success": "成功",
+    "selectAll": "全选",
+    "selectedCount": "已选择 {count} 项",
+    "batchDelete": "批量删除",
+    "batchDeleteConfirm": "确认批量删除",
+    "batchDeleteDescription": "确定要删除选中的 {count} 个邮箱吗？此操作将同时删除这些邮箱中的所有邮件，且不可恢复。",
+    "batchDeleteSuccess": "成功删除 {count} 个邮箱",
+    "batchDeleteFailed": "批量删除失败",
+    "deleteAll": "全部删除",
+    "deleteAllConfirm": "确认全部删除",
+    "deleteAllDescription": "确定要删除所有 {count} 个邮箱吗？此操作将同时删除这些邮箱中的所有邮件，且不可恢复。",
+    "deleteAllSuccess": "成功删除所有 {count} 个邮箱",
+    "deleteAllFailed": "全部删除失败",
+    "deleting": "删除中..."
   },
   "create": {
     "title": "创建邮箱",

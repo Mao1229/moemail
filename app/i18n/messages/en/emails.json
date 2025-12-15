@@ -28,7 +28,20 @@
     "deleteSuccess": "Email deleted successfully",
     "deleteFailed": "Failed to delete email",
     "error": "Error",
-    "success": "Success"
+    "success": "Success",
+    "selectAll": "Select All",
+    "selectedCount": "{count} selected",
+    "batchDelete": "Batch Delete",
+    "batchDeleteConfirm": "Confirm Batch Delete",
+    "batchDeleteDescription": "Are you sure you want to delete {count} selected emails? This will also delete all messages in these mailboxes and cannot be undone.",
+    "batchDeleteSuccess": "Successfully deleted {count} emails",
+    "batchDeleteFailed": "Batch delete failed",
+    "deleteAll": "Delete All",
+    "deleteAllConfirm": "Confirm Delete All",
+    "deleteAllDescription": "Are you sure you want to delete all {count} emails? This will also delete all messages in these mailboxes and cannot be undone.",
+    "deleteAllSuccess": "Successfully deleted all {count} emails",
+    "deleteAllFailed": "Delete all failed",
+    "deleting": "Deleting..."
   },
   "create": {
     "title": "Create Email",
