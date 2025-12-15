@@ -24,6 +24,7 @@ interface BatchTask {
   error?: string
   createdAt: number
   updatedAt: number
+  emailList?: string[] // 保存创建的邮箱地址列表
 }
 
 // 大批量创建的阈值：超过这个数量使用异步任务模式

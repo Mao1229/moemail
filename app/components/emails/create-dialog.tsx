@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Copy, Plus, RefreshCw } from "lucide-react"
+import { Copy, Plus, RefreshCw, Download } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { nanoid } from "nanoid"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -49,6 +49,46 @@ export function CreateDialog({ onEmailCreated }: CreateDialogProps) {
 
   const copyEmailAddress = () => {
     copyToClipboard(`${emailName}@${currentDomain}`)
+  }
+
+  const downloadEmailList = async (currentTaskId: string) => {
+    let url: string | null = null
+    let linkElement: HTMLAnchorElement | null = null
+    
+    try {
+      const downloadResponse = await fetch(`/api/emails/batch/download/${currentTaskId}`)
+      if (!downloadResponse.ok) {
+        const errorData = await downloadResponse.json().catch(() => ({}))
+        throw new Error((errorData as { error?: string }).error || "下载失败")
+      }
+      const blob = await downloadResponse.blob()
+      url = window.URL.createObjectURL(blob)
+      linkElement = document.createElement("a")
+      linkElement.href = url
+      linkElement.download = `emails-${currentTaskId}.txt`
+      document.body.appendChild(linkElement)
+      linkElement.click()
+      
+      toast({
+        title: tList("success"),
+        description: "邮箱列表下载成功"
+      })
+    } catch (error) {
+      console.error("Failed to download email list:", error)
+      toast({
+        title: tList("error"),
+        description: error instanceof Error ? error.message : "下载失败，请稍后重试",
+        variant: "destructive"
+      })
+    } finally {
+      // 清理资源
+      if (url) {
+        window.URL.revokeObjectURL(url)
+      }
+      if (linkElement && linkElement.parentNode) {
+        document.body.removeChild(linkElement)
+      }
+    }
   }
 
   const createEmail = async () => {
@@ -205,6 +245,9 @@ export function CreateDialog({ onEmailCreated }: CreateDialogProps) {
         })
 
         if (status.status === "completed") {
+          // 自动下载邮箱列表文件
+          await downloadEmailList(currentTaskId)
+          
           toast({
             title: tList("success"),
             description: t("batchSuccess", { count: status.createdCount })
@@ -414,9 +457,22 @@ export function CreateDialog({ onEmailCreated }: CreateDialogProps) {
                       style={{ width: `${taskStatus.progress}%` }}
                     />
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    进度: {taskStatus.processed} / {taskStatus.total} ({taskStatus.progress}%) | 
-                    已创建: {taskStatus.created}
+                  <div className="flex items-center justify-between">
+                    <div className="text-xs text-muted-foreground">
+                      进度: {taskStatus.processed} / {taskStatus.total} ({taskStatus.progress}%) | 
+                      已创建: {taskStatus.created}
+                    </div>
+                    {taskStatus.status === "completed" && taskId && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => downloadEmailList(taskId)}
+                        className="h-7 gap-1"
+                      >
+                        <Download className="h-3 w-3" />
+                        下载列表
+                      </Button>
+                    )}
                   </div>
                 </div>
               )}

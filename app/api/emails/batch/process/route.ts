@@ -19,6 +19,7 @@ interface BatchTask {
   error?: string
   createdAt: number
   updatedAt: number
+  emailList?: string[] // 保存创建的邮箱地址列表
 }
 
 // 每次处理的数量（可根据性能调整）
@@ -140,16 +141,35 @@ export async function POST(request: Request) {
       }
     }
 
+    // 如果无法生成足够的唯一邮箱地址，记录警告但继续处理已生成的
+    if (emailDataList.length === 0 && attempts >= maxAttempts) {
+      console.warn(`Failed to generate any unique email addresses for task ${taskId} after ${maxAttempts} attempts`)
+      // 继续处理，让 processedCount 增加，但不会创建任何邮箱
+      // 这样可以避免任务卡在无限循环中
+    }
+
     // 批量插入
     const INSERT_BATCH_SIZE = 20
     let created = 0
+    const createdAddresses: string[] = []
 
-    for (let i = 0; i < emailDataList.length; i += INSERT_BATCH_SIZE) {
-      const batch = emailDataList.slice(i, i + INSERT_BATCH_SIZE)
-      const batchResults = await db.insert(emails)
-        .values(batch)
-        .returning({ id: emails.id, address: emails.address })
-      created += batchResults.length
+    // 只有当有数据需要插入时才执行插入操作
+    if (emailDataList.length > 0) {
+      try {
+        for (let i = 0; i < emailDataList.length; i += INSERT_BATCH_SIZE) {
+          const batch = emailDataList.slice(i, i + INSERT_BATCH_SIZE)
+          const batchResults = await db.insert(emails)
+            .values(batch)
+            .returning({ id: emails.id, address: emails.address })
+          created += batchResults.length
+          // 收集创建的邮箱地址
+          createdAddresses.push(...batchResults.map(r => r.address))
+        }
+      } catch (insertError) {
+        console.error(`Failed to insert emails for task ${taskId}:`, insertError)
+        // 如果插入失败，抛出错误以便上层处理
+        throw new Error(`邮箱插入失败: ${insertError instanceof Error ? insertError.message : "未知错误"}`)
+      }
     }
 
     // 更新任务进度
@@ -159,6 +179,14 @@ export async function POST(request: Request) {
     task.processedCount += actualProcessed
     task.createdCount += created
     task.updatedAt = Date.now()
+    
+    // 累积保存创建的邮箱地址列表（只保存成功创建的）
+    if (createdAddresses.length > 0) {
+      if (!task.emailList) {
+        task.emailList = []
+      }
+      task.emailList.push(...createdAddresses)
+    }
     
     // 确保 processedCount 不会超过 totalCount（边界检查）
     if (task.processedCount > task.totalCount) {
@@ -172,9 +200,19 @@ export async function POST(request: Request) {
     }
 
     // 保存任务状态
+    // 检查 KV 存储大小限制（Cloudflare KV 单条记录最大 25MB）
+    // 10 万个邮箱地址约 2.5MB（每个地址约 25 字节），加上 JSON 格式约 3-4MB，应该安全
+    const taskJson = JSON.stringify(task)
+    const taskSizeBytes = new TextEncoder().encode(taskJson).length
+    const taskSizeMB = taskSizeBytes / (1024 * 1024)
+    
+    if (taskSizeMB > 20) {
+      console.warn(`Task ${taskId} size is ${taskSizeMB.toFixed(2)}MB, close to KV limit (25MB)`)
+    }
+    
     await env.SITE_CONFIG.put(
       `batch_task:${taskId}`,
-      JSON.stringify(task),
+      taskJson,
       { expirationTtl: 3600 * 24 }
     )
 
