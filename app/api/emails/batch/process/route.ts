@@ -89,14 +89,21 @@ export async function POST(request: Request) {
         { expirationTtl: 3600 * 24 }
       )
     } else {
-      // 其他状态（completed/failed），不需要处理
+      // 其他状态（如已完成/已失败或无需继续处理），直接返回当前状态
+      const statusMessageMap: Record<BatchTask["status"], string> = {
+        pending: "任务等待处理",
+        processing: "任务处理中",
+        completed: "任务已完成",
+        failed: "任务已失败",
+      }
+
       return NextResponse.json({
         status: task.status,
         processed: task.processedCount,
         total: task.totalCount,
         created: task.createdCount,
         progress: Math.round((task.processedCount / task.totalCount) * 100),
-        message: task.status === "completed" ? "任务已完成" : "任务已失败"
+        message: statusMessageMap[task.status],
       })
     }
 
