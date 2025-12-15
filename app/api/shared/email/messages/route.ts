@@ -1,5 +1,5 @@
 import { createDb } from "@/lib/db"
-import { messages, emails, emailShares } from "@/lib/schema"
+import { messages, emails } from "@/lib/schema"
 import { eq, and, or, ne, isNull, lt } from "drizzle-orm"
 import { NextResponse } from "next/server"
 import { encodeCursor, decodeCursor } from "@/lib/cursor"

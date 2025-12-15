@@ -1,6 +1,6 @@
 import { createDb } from "@/lib/db"
-import { messages, emails, emailShares } from "@/lib/schema"
-import { eq, and, or, ne, isNull } from "drizzle-orm"
+import { messages, emails } from "@/lib/schema"
+import { eq, and } from "drizzle-orm"
 import { sql } from "drizzle-orm"
 import { NextResponse } from "next/server"
 
