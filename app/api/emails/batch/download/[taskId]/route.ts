@@ -40,7 +40,6 @@ export async function GET(
 
     // 先从 KV 获取任务（包含完整的 emailList）
     let emailList: string[] = []
-    let taskStatus = "unknown"
     
     const taskData = await env.SITE_CONFIG.get(`batch_task:${taskId}`)
     if (taskData) {
@@ -63,7 +62,6 @@ export async function GET(
       }
 
       emailList = task.emailList || []
-      taskStatus = task.status
     } else {
       // KV 中的任务已过期，从数据库查询
       const db = createDb()
@@ -117,7 +115,6 @@ export async function GET(
       if (emailList.length < dbTask.createdCount) {
         console.warn(`Task ${taskId}: Found ${emailList.length} emails, expected ${dbTask.createdCount}`)
       }
-      taskStatus = dbTask.status
     }
 
     if (emailList.length === 0) {

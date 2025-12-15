@@ -3,8 +3,6 @@
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { signOut, useSession } from "next-auth/react"
-import { LogIn } from "lucide-react"
-import { useRouter } from 'next/navigation'
 import { useTranslations, useLocale } from "next-intl"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
@@ -14,7 +12,6 @@ interface SignButtonProps {
 }
 
 export function SignButton({ size = "default" }: SignButtonProps) {
-  const router = useRouter()
   const locale = useLocale()
   const { data: session, status } = useSession()
   const t = useTranslations("auth.signButton")

@@ -44,8 +44,7 @@ export async function POST(request: Request) {
   const userRole = await getUserRole(userId)
 
   try {
-    const { name, expiryTime, domain, batch } = await request.json<{ 
-      name?: string
+    const { expiryTime, domain, batch } = await request.json<{ 
       expiryTime: number
       domain: string
       batch?: number

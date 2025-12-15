@@ -94,7 +94,7 @@ export async function POST(request: Request) {
     try {
       for (let i = 0; i < userEmailIds.length; i += DELETE_BATCH_SIZE) {
         const batch = userEmailIds.slice(i, i + DELETE_BATCH_SIZE)
-        const result = await db.delete(emails)
+        await db.delete(emails)
           .where(inArray(emails.id, batch))
         deletedCount += batch.length
       }

@@ -188,10 +188,10 @@ export function CreateDialog({ onEmailCreated }: CreateDialogProps) {
       onEmailCreated()
       setOpen(false)
       setEmailName("")
-        setBatchCount(5)
-        setLoading(false)
-      }
-    } catch (error) {
+      setBatchCount(5)
+      setLoading(false)
+    }
+    } catch {
       toast({
         title: tList("error"),
         description: t("failed"),

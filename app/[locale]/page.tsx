@@ -1,5 +1,4 @@
 import { Lock } from "lucide-react"
-import type { Locale } from "@/i18n/config"
 
 export const runtime = "edge"
 

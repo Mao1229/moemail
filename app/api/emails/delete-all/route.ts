@@ -6,7 +6,7 @@ import { getUserId } from "@/lib/apiKey"
 
 export const runtime = "edge"
 
-export async function POST(request: Request) {
+export async function POST(_request: Request) {
   try {
     const userId = await getUserId()
     if (!userId) {

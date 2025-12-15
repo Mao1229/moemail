@@ -471,7 +471,7 @@ export function EmailList({ onEmailSelect, selectedEmailId }: EmailListProps) {
                     <div onClick={(e) => e.stopPropagation()} className="flex items-center">
                       <Checkbox
                         checked={isSelected}
-                        onChange={(checked) => toggleEmailSelection(email.id)}
+                        onChange={() => toggleEmailSelection(email.id)}
                         className="shrink-0 scale-75"
                       />
                     </div>
