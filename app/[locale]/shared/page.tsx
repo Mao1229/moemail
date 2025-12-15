@@ -1,7 +1,6 @@
 import { getSharedEmailByAddress, getSharedEmailMessagesByAddress } from "@/lib/shared-data"
 import { SharedErrorPage } from "@/components/emails/shared-error-page"
-import { SharedEmailPageClient } from "../[token]/page-client"
-import { redirect } from "next/navigation"
+import { SharedEmailPageClient } from "@/components/emails/shared-email-page-client"
 
 interface PageProps {
   params: Promise<{ locale: string }>

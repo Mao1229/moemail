@@ -1,6 +1,6 @@
 import { getSharedEmail, getSharedEmailMessages, getSharedEmailByAddress, getSharedEmailMessagesByAddress } from "@/lib/shared-data"
 import { SharedErrorPage } from "@/components/emails/shared-error-page"
-import { SharedEmailPageClient } from "./page-client"
+import { SharedEmailPageClient } from "@/components/emails/shared-email-page-client"
 
 interface PageProps {
   params: Promise<{
