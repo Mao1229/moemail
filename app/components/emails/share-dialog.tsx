@@ -48,7 +48,7 @@ interface ShareLink {
   enabled: boolean
 }
 
-export function ShareDialog({ emailId }: ShareDialogProps) {
+export function ShareDialog({ emailId, emailAddress }: ShareDialogProps) {
   const t = useTranslations("emails.share")
   const { toast } = useToast()
   const { copyToClipboard } = useCopy()
@@ -138,8 +138,28 @@ export function ShareDialog({ emailId }: ShareDialogProps) {
     return `${window.location.origin}/shared/${token}`
   }
 
+  const getEmailAddressUrl = () => {
+    return `${window.location.origin}/shared/email?email=${encodeURIComponent(emailAddress)}`
+  }
+
   const handleCopy = async (token: string) => {
     const url = getShareUrl(token)
+    const success = await copyToClipboard(url)
+
+    if (success) {
+      toast({
+        title: t("copied"),
+      })
+    } else {
+      toast({
+        title: t("copyFailed"),
+        variant: "destructive"
+      })
+    }
+  }
+
+  const handleCopyEmailAddress = async () => {
+    const url = getEmailAddressUrl()
     const success = await copyToClipboard(url)
 
     if (success) {
@@ -186,6 +206,35 @@ export function ShareDialog({ emailId }: ShareDialogProps) {
           </DialogHeader>
 
           <div className="space-y-4">
+            {/* Email address access link */}
+            <div className="space-y-2">
+              <Label>{t("emailAddressLink")}</Label>
+              <div className="p-3 border rounded-lg space-y-2 bg-primary/5 border-primary/20">
+                <div className="flex items-center gap-2">
+                  <Link2 className="h-4 w-4 flex-shrink-0 text-primary/60" />
+                  <a
+                    href={getEmailAddressUrl()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 text-xs p-1 rounded font-mono transition-colors break-all bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary cursor-pointer"
+                  >
+                    {getEmailAddressUrl()}
+                  </a>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 flex-shrink-0"
+                    onClick={handleCopyEmailAddress}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="text-xs text-gray-500">
+                  {t("emailAddressLinkDesc")}
+                </div>
+              </div>
+            </div>
+
             {/* Create new share link */}
             <div className="space-y-2">
               <Label>{t("expiryTime")}</Label>

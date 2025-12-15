@@ -89,6 +89,8 @@
   "share": {
     "title": "Share Mailbox",
     "description": "Create a share link to let others view emails in this mailbox",
+    "emailAddressLink": "Email Address Access Link",
+    "emailAddressLinkDesc": "Access directly via email address, no need to create a share link",
     "createLink": "Create Link",
     "creating": "Creating...",
     "loading": "Loading...",

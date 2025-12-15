@@ -34,7 +34,7 @@ interface SharedEmailPageClientProps {
   initialMessages: Message[]
   initialNextCursor: string | null
   initialTotal: number
-  token: string
+  token: string // token 为空字符串时表示通过邮箱地址访问
 }
 
 export function SharedEmailPageClient({
@@ -68,7 +68,15 @@ export function SharedEmailPageClient({
         setLoadingMore(true)
       }
 
-      const url = new URL(`/api/shared/${token}/messages`, window.location.origin)
+      let url: URL
+      // 如果 token 为空，使用邮箱地址方式访问
+      if (!token) {
+        url = new URL('/api/shared/email/messages', window.location.origin)
+        url.searchParams.set('email', email.address)
+      } else {
+        url = new URL(`/api/shared/${token}/messages`, window.location.origin)
+      }
+      
       if (cursor) {
         url.searchParams.set('cursor', cursor)
       }
@@ -145,7 +153,7 @@ export function SharedEmailPageClient({
       stopPolling()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token])
+  }, [token, email.address])
 
   const handleLoadMore = () => {
     if (nextCursor && !loadingMore) {
@@ -157,7 +165,15 @@ export function SharedEmailPageClient({
     try {
       setMessageLoading(true)
 
-      const response = await fetch(`/api/shared/${token}/messages/${messageId}`)
+      let url: string
+      // 如果 token 为空，使用邮箱地址方式访问
+      if (!token) {
+        url = `/api/shared/email/messages/${messageId}?email=${encodeURIComponent(email.address)}`
+      } else {
+        url = `/api/shared/${token}/messages/${messageId}`
+      }
+
+      const response = await fetch(url)
 
       if (!response.ok) {
         throw new Error("Failed to load message")

@@ -1,6 +1,7 @@
 import { createDb } from "@/lib/db"
 import { emailShares, messageShares, messages, emails } from "@/lib/schema"
 import { eq, desc, and, or, ne, isNull } from "drizzle-orm"
+import { sql } from "drizzle-orm"
 
 export interface SharedEmail {
   id: string
@@ -60,6 +61,40 @@ export async function getSharedEmail(token: string): Promise<SharedEmail | null>
   }
 }
 
+// 通过邮箱地址获取共享邮箱信息（允许所有有效且未过期的邮箱访问）
+export async function getSharedEmailByAddress(emailAddress: string): Promise<SharedEmail | null> {
+  const db = createDb()
+
+  try {
+    // 先查找邮箱（使用大小写不敏感查询）
+    const email = await db.query.emails.findFirst({
+      where: eq(sql`LOWER(${emails.address})`, emailAddress.toLowerCase())
+    })
+
+    if (!email) {
+      console.log(`Email not found: ${emailAddress}`)
+      return null
+    }
+
+    // 检查邮箱是否过期
+    if (email.expiresAt < new Date()) {
+      console.log(`Email expired: ${emailAddress}, expiresAt: ${email.expiresAt}`)
+      return null
+    }
+
+    // 允许所有有效且未过期的邮箱通过地址访问
+    return {
+      id: email.id,
+      address: email.address,
+      createdAt: email.createdAt,
+      expiresAt: email.expiresAt
+    }
+  } catch (error) {
+    console.error("Failed to fetch shared email by address:", error)
+    return null
+  }
+}
+
 export interface SharedMessagesResult {
   messages: SharedMessage[]
   nextCursor: string | null
@@ -86,9 +121,21 @@ export async function getSharedEmailMessages(token: string, limit = 20): Promise
       return { messages: [], nextCursor: null, total: 0 }
     }
 
+    return getEmailMessagesByEmailId(share.emailId, limit)
+  } catch (error) {
+    console.error("Failed to fetch shared email messages:", error)
+    return { messages: [], nextCursor: null, total: 0 }
+  }
+}
+
+// 通过邮箱ID获取邮件列表（内部函数，供两种方式共用）
+async function getEmailMessagesByEmailId(emailId: string, limit = 20): Promise<SharedMessagesResult> {
+  const db = createDb()
+
+  try {
     // 只显示接收的邮件，不显示发送的邮件
     const baseConditions = and(
-      eq(messages.emailId, share.emailId),
+      eq(messages.emailId, emailId),
       or(
         ne(messages.type, "sent"),
         isNull(messages.type)
@@ -96,7 +143,6 @@ export async function getSharedEmailMessages(token: string, limit = 20): Promise
     )
 
     // 获取消息总数（只统计接收的邮件）
-    const { sql } = await import("drizzle-orm")
     const totalResult = await db.select({ count: sql<number>`count(*)` })
       .from(messages)
       .where(baseConditions)
@@ -136,7 +182,33 @@ export async function getSharedEmailMessages(token: string, limit = 20): Promise
       total: totalCount
     }
   } catch (error) {
-    console.error("Failed to fetch shared email messages:", error)
+    console.error("Failed to fetch email messages:", error)
+    return { messages: [], nextCursor: null, total: 0 }
+  }
+}
+
+// 通过邮箱地址获取邮件列表
+export async function getSharedEmailMessagesByAddress(emailAddress: string, limit = 20): Promise<SharedMessagesResult> {
+  const db = createDb()
+
+  try {
+    const email = await db.query.emails.findFirst({
+      where: eq(sql`LOWER(${emails.address})`, emailAddress.toLowerCase())
+    })
+
+    if (!email) {
+      return { messages: [], nextCursor: null, total: 0 }
+    }
+
+    // 检查邮箱是否过期
+    if (email.expiresAt < new Date()) {
+      return { messages: [], nextCursor: null, total: 0 }
+    }
+
+    // 允许所有有效且未过期的邮箱通过地址访问邮件列表
+    return getEmailMessagesByEmailId(email.id, limit)
+  } catch (error) {
+    console.error("Failed to fetch shared email messages by address:", error)
     return { messages: [], nextCursor: null, total: 0 }
   }
 }
