@@ -77,6 +77,9 @@ importers:
       next-themes:
         specifier: ^0.2.1
         version: 0.2.1(next@15.1.1(@babel/core@7.26.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      pnpm:
+        specifier: ^10.25.0
+        version: 10.25.0
       postal-mime:
         specifier: ^2.3.2
         version: 2.3.2
@@ -2854,6 +2857,7 @@ packages:
 
   bun@1.1.39:
     resolution: {integrity: sha512-9BMRchlxJqEc7B+t64hLLXXLGoZQiWOD8rFoyd4hTJTdoCewBH2pwC8TSEcZ/nl+UzBggYxcoZ5Aw585WFbLiA==}
+    cpu: [arm64, x64, aarch64]
     os: [darwin, linux, win32]
     hasBin: true
 
@@ -4831,6 +4835,11 @@ packages:
   pkg-dir@4.2.0:
     resolution: {integrity: sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==}
     engines: {node: '>=8'}
+
+  pnpm@10.25.0:
+    resolution: {integrity: sha512-XoJjkCevN8+DIGG8xtY5whljRIjg8rrr54UCink957Ul/80/f/V09emGBlTgmP6FK6isXdXO/hdn0joCCpL1AQ==}
+    engines: {node: '>=18.12'}
+    hasBin: true
 
   possible-typed-array-names@1.0.0:
     resolution: {integrity: sha512-d7Uw+eZoloe0EHDIYoe+bQ5WXnGMOpmiZFTuMWCwpjzzkL2nTjcKiAk4hh8TjnGye2TwWOk3UXucZ+3rbmBa8Q==}
@@ -10589,6 +10598,8 @@ snapshots:
   pkg-dir@4.2.0:
     dependencies:
       find-up: 4.1.0
+
+  pnpm@10.25.0: {}
 
   possible-typed-array-names@1.0.0: {}
 
