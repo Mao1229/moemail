@@ -19,7 +19,6 @@ export default async function SharedEmailByAddressPage({ params: _params, search
         errorKey="linkInvalid"
         descriptionKey="linkInvalidDescription"
         ctaTextKey="createOwnEmail"
-        hideDetails
       />
     )
   }
@@ -35,7 +34,6 @@ export default async function SharedEmailByAddressPage({ params: _params, search
         errorKey="linkInvalid"
         descriptionKey="linkInvalidDescription"
         ctaTextKey="createOwnEmail"
-        hideDetails
       />
     )
   }
