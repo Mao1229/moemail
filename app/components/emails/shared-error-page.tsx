@@ -12,6 +12,7 @@ interface SharedErrorPageProps {
   errorKey: string
   descriptionKey: string
   ctaTextKey: string
+  hideDetails?: boolean
 }
 
 export function SharedErrorPage({
@@ -20,6 +21,7 @@ export function SharedErrorPage({
   errorKey,
   descriptionKey,
   ctaTextKey,
+  hideDetails = false,
 }: SharedErrorPageProps) {
   const tShared = useTranslations("emails.shared")
 
@@ -37,15 +39,17 @@ export function SharedErrorPage({
           subtitle={resolvedSubtitle}
           ctaText={resolvedCtaText}
         />
-        <div className="text-center mt-6">
-          <Card className="max-w-md mx-auto p-8 text-center space-y-4">
-            <AlertCircle className="h-12 w-12 mx-auto text-destructive" />
-            <h2 className="text-2xl font-bold">{resolvedError}</h2>
-            <p className="text-gray-500">
-              {resolvedDescription}
-            </p>
-          </Card>
-        </div>
+        {!hideDetails && (
+          <div className="text-center mt-6">
+            <Card className="max-w-md mx-auto p-8 text-center space-y-4">
+              <AlertCircle className="h-12 w-12 mx-auto text-destructive" />
+              <h2 className="text-2xl font-bold">{resolvedError}</h2>
+              <p className="text-gray-500">
+                {resolvedDescription}
+              </p>
+            </Card>
+          </div>
+        )}
       </div>
 
       <FloatingLanguageSwitcher />
