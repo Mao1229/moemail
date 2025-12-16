@@ -14,11 +14,11 @@ interface SharedErrorPageProps {
 }
 
 export function SharedErrorPage({
-  titleKey,
-  subtitleKey,
+  titleKey: _titleKey,
+  subtitleKey: _subtitleKey,
   errorKey,
   descriptionKey,
-  ctaTextKey,
+  ctaTextKey: _ctaTextKey,
 }: SharedErrorPageProps) {
   const tShared = useTranslations("emails.shared")
 
