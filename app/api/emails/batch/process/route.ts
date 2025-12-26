@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { nanoid } from "nanoid"
 import { createDb } from "@/lib/db"
+import { generateEmailRandomName } from "@/lib/utils"
 import { emails, batchTasks } from "@/lib/schema"
 import { eq, sql } from "drizzle-orm"
 import { getRequestContext } from "@cloudflare/next-on-pages"
@@ -124,7 +125,7 @@ export async function POST(request: Request) {
 
     while (emailDataList.length < toProcess && attempts < maxAttempts) {
       attempts++
-      const address = `${nanoid(8)}@${task.domain}`
+      const address = `${generateEmailRandomName(8)}@${task.domain}`
       const addressLower = address.toLowerCase()
 
       if (addressSet.has(addressLower)) {

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { nanoid } from "nanoid"
 import { createDb } from "@/lib/db"
+import { generateEmailRandomName } from "@/lib/utils"
 import { emails, batchTasks } from "@/lib/schema"
 import { eq, and, gt, sql } from "drizzle-orm"
 import { EXPIRY_OPTIONS } from "@/types/email"
@@ -94,7 +95,7 @@ export async function POST(request: Request) {
       // 这样可以减少数据库往返次数
       while (emailDataList.length < batchCount && attempts < maxAttempts) {
         attempts++
-        const address = `${nanoid(8)}@${domain}`
+        const address = `${generateEmailRandomName(8)}@${domain}`
         const addressLower = address.toLowerCase()
         
         // 检查是否已在本次批量中生成
@@ -162,7 +163,7 @@ export async function POST(request: Request) {
     }
     
     // 单个创建
-    const address = `${name || nanoid(8)}@${domain}`
+    const address = `${name || generateEmailRandomName(8)}@${domain}`
     const existingEmail = await db.query.emails.findFirst({
       where: eq(sql`LOWER(${emails.address})`, address.toLowerCase())
     })
