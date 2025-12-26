@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import { nanoid } from "nanoid"
 import { createDb } from "@/lib/db"
 import { generateEmailRandomName } from "@/lib/utils"
 import { emails, batchTasks } from "@/lib/schema"
