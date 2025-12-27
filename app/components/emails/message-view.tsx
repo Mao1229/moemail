@@ -165,6 +165,17 @@ export function MessageView({ emailId, messageId, messageType = 'received' }: Me
         `)
         doc.close()
 
+        // 拦截所有链接点击，确保在新标签页打开且不发送 Referer
+        doc.addEventListener('click', (e) => {
+          const target = e.target as HTMLElement
+          const link = target.closest('a')
+          if (link && link.href) {
+            e.preventDefault()
+            // 使用 window.open 在新标签页打开，并且不发送 Referer
+            window.open(link.href, '_blank', 'noopener,noreferrer')
+          }
+        }, true)
+
         // 更新高度以填充容器
         const updateHeight = () => {
           const container = iframe.parentElement
@@ -284,7 +295,7 @@ export function MessageView({ emailId, messageId, messageType = 'received' }: Me
           <iframe
             ref={iframeRef}
             className="absolute inset-0 w-full h-full border-0 bg-transparent"
-            sandbox="allow-same-origin allow-popups"
+            sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-scripts"
           />
         ) : (
           <div className="p-4 text-sm whitespace-pre-wrap">
