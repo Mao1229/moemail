@@ -61,12 +61,28 @@ export function SharedMessageDetail({
       const doc = iframe.contentDocument || iframe.contentWindow?.document
 
       if (doc) {
+        // 处理 HTML 内容，为所有链接添加 referrerpolicy="no-referrer"
+        let processedHtml = message.html
+        // 使用正则表达式为所有 <a> 标签添加 referrerpolicy="no-referrer"
+        processedHtml = processedHtml.replace(
+          /<a\s+([^>]*?)>/gi,
+          (match, attributes) => {
+            // 如果已经包含 referrerpolicy，跳过
+            if (/referrerpolicy/i.test(attributes)) {
+              return match
+            }
+            // 添加 referrerpolicy="no-referrer"
+            return `<a ${attributes} referrerpolicy="no-referrer">`
+          }
+        )
+
         doc.open()
         doc.write(`
           <!DOCTYPE html>
           <html>
             <head>
-              <base target="_blank">
+              <base target="_blank" referrerpolicy="no-referrer">
+              <meta name="referrer" content="no-referrer">
               <style>
                 html, body {
                   margin: 0;
@@ -119,7 +135,7 @@ export function SharedMessageDetail({
                 }
               </style>
             </head>
-            <body>${message.html}</body>
+            <body>${processedHtml}</body>
           </html>
         `)
         doc.close()
