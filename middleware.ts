@@ -19,7 +19,8 @@ export async function middleware(request: Request) {
   const pathname = url.pathname
 
   if (pathname.startsWith('/api')) {
-    if (pathname.startsWith('/api/auth')) {
+    // 公开接口，不需要认证
+    if (pathname.startsWith('/api/auth') || pathname.startsWith('/api/shared')) {
       return NextResponse.next()
     }
 
